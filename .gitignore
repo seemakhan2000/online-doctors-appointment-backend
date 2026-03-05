@@ -1,0 +1,17 @@
+# =========================
+# Node modules
+# =========================
+node_modules/
+
+# =========================
+# Environment variables
+# =========================
+.env
+
+
+# =========================
+# Public folder uploads
+# =========================
+# This folder stores images uploaded via admin (e.g., doctor images),
+# only the file path is saved in the database. Do not commit the files to Git.
+public/uploads/
