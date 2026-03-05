@@ -19,7 +19,7 @@ const app = express();
 
 app.use(cors({
  origin: [
-    "https://online-doctors-appointment-frontend.netlify.app",
+    "https://https://online-doctors-appointments-frontend.netlify.app/",
     "http://localhost:3000"
   ],
   credentials: true
