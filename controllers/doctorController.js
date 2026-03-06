@@ -1,13 +1,7 @@
 const Doctor = require("../models/Doctor");
 const Review = require("../models/Review")
-const cloudinary = require("cloudinary").v2;
 
-// Configure Cloudinary
-cloudinary.config({
-  cloud_name: process.env.CLOUD_NAME,
-  api_key: process.env.CLOUD_API_KEY,
-  api_secret: process.env.CLOUD_API_SECRET,
-});
+
 
 // exports.getAllDoctors = async (req, res) => {
 //   try {
@@ -427,25 +421,66 @@ exports.updateDoctor = async (req, res) => {
 
 
 
+// exports.deleteDoctor = async (req, res) => {
+//   try {
+//     const doctor = await Doctor.findById(req.params.id);
+//     if (!doctor)
+//       return res
+//         .status(404)
+//         .json({ success: false, message: "Doctor not found" });
+
+//     if (doctor.image) {
+//       const imagePath = path.join(__dirname, "..", "public", doctor.image);
+//       if (fs.existsSync(imagePath)) fs.unlinkSync(imagePath);
+//     }
+
+//     await Doctor.findByIdAndDelete(req.params.id);
+//     res.json({ success: true, message: "Doctor deleted successfully" });
+//   } catch (err) {
+//     res.status(500).json({ success: false, message: "Server error" });
+//   }
+// };
+
+
+
+
 exports.deleteDoctor = async (req, res) => {
   try {
-    const doctor = await Doctor.findById(req.params.id);
-    if (!doctor)
-      return res
-        .status(404)
-        .json({ success: false, message: "Doctor not found" });
 
+    const doctor = await Doctor.findById(req.params.id);
+
+    if (!doctor) {
+      return res.status(404).json({
+        success: false,
+        message: "Doctor not found"
+      });
+    }
+
+    // delete image from cloudinary
     if (doctor.image) {
-      const imagePath = path.join(__dirname, "..", "public", doctor.image);
-      if (fs.existsSync(imagePath)) fs.unlinkSync(imagePath);
+      const publicId = doctor.image.split("/").pop().split(".")[0];
+      await cloudinary.uploader.destroy(`doctors/${publicId}`);
     }
 
     await Doctor.findByIdAndDelete(req.params.id);
-    res.json({ success: true, message: "Doctor deleted successfully" });
-  } catch (err) {
-    res.status(500).json({ success: false, message: "Server error" });
+
+    res.json({
+      success: true,
+      message: "Doctor deleted successfully"
+    });
+
+  } catch (error) {
+
+    console.error("Delete Doctor Error:", error);
+
+    res.status(500).json({
+      success: false,
+      message: "Server error"
+    });
   }
 };
+
+
 
 exports.searchDoctors = async (req, res) => {
   const query = req.query.q || "";

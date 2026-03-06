@@ -4,6 +4,7 @@ const cors = require("cors");
 const path = require("path");
 dotenv.config();
 
+const cloudinary = require("./config/cloudinary");
 const connectDB = require("./config/connectDB");
 const authRoutes = require("./routes/authRoutes");
 const doctorRoutes = require("./routes/doctorRoutes");
