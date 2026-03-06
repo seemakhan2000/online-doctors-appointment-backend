@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 const doctorController = require("../controllers/doctorController");
 const upload = require("../middlewares/upload");
-
 // Search
 router.get("/search", doctorController.searchDoctors);
 
