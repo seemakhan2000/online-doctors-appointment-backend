@@ -1,36 +1,24 @@
 const express = require("express");
 const router = express.Router();
 const doctorController = require("../controllers/doctorController");
-const path = require("path");
+const upload = require("../middleware/upload");
 
-// Multer Config
-const multer = require("multer");
-const { CloudinaryStorage } = require("multer-storage-cloudinary");
-const cloudinary = require("cloudinary").v2;
-
-
-
-// Cloudinary storage
-const storage = new CloudinaryStorage({
-  cloudinary: cloudinary,
-  params: {
-    folder: "doctors",
-    allowed_formats: ["jpg", "png", "jpeg"],
-  },
-});
-
-const upload = multer({ storage });
-
-
-// Routes
+// Search
 router.get("/search", doctorController.searchDoctors);
+
+// Get all doctors
 router.get("/", doctorController.getAllDoctors);
+
+// Add doctor
 router.post("/", upload.single("image"), doctorController.addDoctor);
+
+// Get doctor by id
 router.get("/:id", doctorController.getDoctorById);
+
+// Update doctor
 router.put("/:id", upload.single("image"), doctorController.updateDoctor);
+
+// Delete doctor
 router.delete("/:id", doctorController.deleteDoctor);
 
-
 module.exports = router;
-
-

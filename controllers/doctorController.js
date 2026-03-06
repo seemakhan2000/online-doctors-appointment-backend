@@ -113,16 +113,12 @@ exports.getAllDoctors = async (req, res) => {
 
 exports.addDoctor = async (req, res) => {
   try {
-
     let imageUrl = "";
-
-    // image from cloudinary
     if (req.file) {
-      imageUrl = req.file.path;
+      imageUrl = req.file.path; // Cloudinary URL
     }
 
     let slots = [];
-
     try {
       slots = JSON.parse(req.body.availabilitySlots || "[]");
     } catch (err) {
@@ -150,11 +146,8 @@ exports.addDoctor = async (req, res) => {
       message: "Doctor added successfully",
       doctor
     });
-
   } catch (error) {
-
     console.error("ADD DOCTOR ERROR:", error);
-
     res.status(500).json({
       success: false,
       message: error.message
