@@ -115,39 +115,26 @@ exports.getAllDoctors = async (req, res) => {
 
 
 
+
+
 exports.addDoctor = async (req, res) => {
   try {
+    let imageUrl = "";
 
-    const {
-      name,
-      specialization,
-      email,
-      phone,
-      experience,
-      education,
-      certifications,
-      languages,
-      hospital
-    } = req.body;
-
-    const availabilitySlots = req.body.availabilitySlots
-      ? JSON.parse(req.body.availabilitySlots)
-      : [];
-
-    const image = req.file ? req.file.path : "";
+    if (req.file) {
+      imageUrl = req.file.path;
+    }
 
     const doctor = new Doctor({
-      name,
-      specialization,
-      email,
-      phone,
-      experience,
-      education,
-      certifications,
-      languages,
-      hospital,
-      availabilitySlots,
-      image
+      name: req.body.name,
+      specialization: req.body.specialization,
+      email: req.body.email,
+      phone: req.body.phone,
+      image: imageUrl,
+      experience: req.body.experience,
+      education: req.body.education,
+      certifications: req.body.certifications,
+      languages: req.body.languages
     });
 
     await doctor.save();
@@ -158,14 +145,13 @@ exports.addDoctor = async (req, res) => {
     });
 
   } catch (error) {
-    console.error("Add Doctor Error:", error);
+    console.log("Add Doctor Error:", error);
     res.status(500).json({
-      message: "Server error"
+      success: false,
+      message: error.message
     });
   }
 };
-
-
 
 // function formatAvailabilitySlots(slots) {
 //   const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
