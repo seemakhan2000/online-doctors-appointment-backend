@@ -117,7 +117,8 @@ exports.addDoctor = async (req, res) => {
     if (req.file) {
       imageUrl = req.file.path; // Cloudinary URL
     }
-
+ console.log("REQ FILE:", req.file);
+    console.log("REQ BODY:", req.body);
     let slots = [];
     try {
       slots = JSON.parse(req.body.availabilitySlots || "[]");
