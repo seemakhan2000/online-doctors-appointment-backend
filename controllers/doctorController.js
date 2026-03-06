@@ -329,40 +329,102 @@ exports.getDoctorById = async (req, res) => {
 //   }
 // };
 
+// exports.updateDoctor = async (req, res) => {
+//   try {
+//     const doctor = await Doctor.findById(req.params.id);
+//     if (!doctor)
+//       return res
+//         .status(404)
+//         .json({ success: false, message: "Doctor not found" });
+
+//     if (req.file) {
+//       if (doctor.image) {
+//         const oldPath = path.join(__dirname, "..", "public", doctor.image);
+//         if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
+//       }
+//       doctor.image = req.file.path;
+//     }
+
+//     doctor.name = req.body.name || doctor.name;
+//     doctor.specialization = req.body.specialization || doctor.specialization;
+//     doctor.email = req.body.email || doctor.email;
+//     doctor.phone = req.body.phone || doctor.phone;
+//     doctor.experience = req.body.experience || doctor.experience;
+//     doctor.education = req.body.education || doctor.education;
+//     doctor.certifications = req.body.certifications || doctor.certifications;
+//     doctor.languages = req.body.languages || doctor.languages;
+//     doctor.hospital = req.body.hospital || doctor.hospital;
+
+//     await doctor.save();
+
+//     res.json({ success: true, message: "Doctor updated successfully", doctor });
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ success: false, message: "Server error" });
+//   }
+// };
+
+
+
+
 exports.updateDoctor = async (req, res) => {
   try {
-    const doctor = await Doctor.findById(req.params.id);
-    if (!doctor)
-      return res
-        .status(404)
-        .json({ success: false, message: "Doctor not found" });
 
+    const doctor = await Doctor.findById(req.params.id);
+
+    if (!doctor) {
+      return res.status(404).json({
+        success: false,
+        message: "Doctor not found"
+      });
+    }
+
+    const {
+      name,
+      specialization,
+      email,
+      phone,
+      experience,
+      education,
+      certifications,
+      languages,
+      hospital
+    } = req.body;
+
+    doctor.name = name;
+    doctor.specialization = specialization;
+    doctor.email = email;
+    doctor.phone = phone;
+    doctor.experience = experience;
+    doctor.education = education;
+    doctor.certifications = certifications;
+    doctor.languages = languages;
+    doctor.hospital = hospital;
+
+    // update image if uploaded
     if (req.file) {
-      if (doctor.image) {
-        const oldPath = path.join(__dirname, "..", "public", doctor.image);
-        if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
-      }
       doctor.image = req.file.path;
     }
 
-    doctor.name = req.body.name || doctor.name;
-    doctor.specialization = req.body.specialization || doctor.specialization;
-    doctor.email = req.body.email || doctor.email;
-    doctor.phone = req.body.phone || doctor.phone;
-    doctor.experience = req.body.experience || doctor.experience;
-    doctor.education = req.body.education || doctor.education;
-    doctor.certifications = req.body.certifications || doctor.certifications;
-    doctor.languages = req.body.languages || doctor.languages;
-    doctor.hospital = req.body.hospital || doctor.hospital;
-
     await doctor.save();
 
-    res.json({ success: true, message: "Doctor updated successfully", doctor });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ success: false, message: "Server error" });
+    res.json({
+      success: true,
+      doctor
+    });
+
+  } catch (error) {
+    console.error("Update Doctor Error:", error);
+
+    res.status(500).json({
+      success: false,
+      message: "Server error"
+    });
   }
 };
+
+
+
 
 exports.deleteDoctor = async (req, res) => {
   try {
