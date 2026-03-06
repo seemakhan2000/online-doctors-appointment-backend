@@ -119,10 +119,20 @@ exports.getAllDoctors = async (req, res) => {
 
 exports.addDoctor = async (req, res) => {
   try {
+
     let imageUrl = "";
 
+    // image from cloudinary
     if (req.file) {
       imageUrl = req.file.path;
+    }
+
+    let slots = [];
+
+    try {
+      slots = JSON.parse(req.body.availabilitySlots || "[]");
+    } catch (err) {
+      console.log("Invalid availability JSON");
     }
 
     const doctor = new Doctor({
@@ -130,22 +140,27 @@ exports.addDoctor = async (req, res) => {
       specialization: req.body.specialization,
       email: req.body.email,
       phone: req.body.phone,
-      image: imageUrl,
       experience: req.body.experience,
       education: req.body.education,
       certifications: req.body.certifications,
-      languages: req.body.languages
+      languages: req.body.languages,
+      hospital: req.body.hospital,
+      image: imageUrl,
+      availabilitySlots: slots
     });
 
     await doctor.save();
 
     res.status(201).json({
       success: true,
+      message: "Doctor added successfully",
       doctor
     });
 
   } catch (error) {
-    console.log("Add Doctor Error:", error);
+
+    console.error("ADD DOCTOR ERROR:", error);
+
     res.status(500).json({
       success: false,
       message: error.message
