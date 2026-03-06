@@ -115,8 +115,51 @@ exports.addDoctor = async (req, res) => {
 
 
 
+// function formatAvailabilitySlots(slots) {
+//   const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+//   const formatTime = (d) => {
+//     const date = new Date(d);
+//     return date.toLocaleTimeString("en-US", {
+//       hour: "numeric",
+//       minute: "2-digit",
+//       hour12: true,
+//     });
+//   };
+
+//   // Step 1: Map slots
+//   const mapped = slots.map((slot) => {
+//     const start = new Date(slot.start);
+//     const end = new Date(slot.end);
+
+//     return {
+//       weekday: start.getDay(),
+//       day: days[start.getDay()],
+//       startTime: formatTime(start),
+//       endTime: formatTime(end),
+//     };
+//   });
+
+//   // Step 2: Sort by weekday + time
+//   mapped.sort((a, b) => {
+//     if (a.weekday !== b.weekday) return a.weekday - b.weekday;
+//     return a.startTime.localeCompare(b.startTime);
+//   });
+
+//   // Step 3: Return professional string
+//   return mapped.map((s) => `${s.day} • ${s.startTime} - ${s.endTime}`);
+// }
+
+
+
+
+
+
+
+
 function formatAvailabilitySlots(slots) {
-  const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+  const days = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
 
   const formatTime = (d) => {
     const date = new Date(d);
@@ -127,28 +170,31 @@ function formatAvailabilitySlots(slots) {
     });
   };
 
-  // Step 1: Map slots
   const mapped = slots.map((slot) => {
-    const start = new Date(slot.start);
-    const end = new Date(slot.end);
+
+    const start = new Date(`1970-01-01T${slot.startTime}`);
+    const end = new Date(`1970-01-01T${slot.endTime}`);
 
     return {
-      weekday: start.getDay(),
-      day: days[start.getDay()],
+      weekday: slot.dayOfWeek,
+      day: days[slot.dayOfWeek],
       startTime: formatTime(start),
       endTime: formatTime(end),
     };
   });
 
-  // Step 2: Sort by weekday + time
-  mapped.sort((a, b) => {
-    if (a.weekday !== b.weekday) return a.weekday - b.weekday;
+  mapped.sort((a,b)=>{
+    if(a.weekday !== b.weekday) return a.weekday - b.weekday;
     return a.startTime.localeCompare(b.startTime);
   });
 
-  // Step 3: Return professional string
-  return mapped.map((s) => `${s.day} • ${s.startTime} - ${s.endTime}`);
+  return mapped.map(s => `${s.day} • ${s.startTime} - ${s.endTime}`);
 }
+
+
+
+
+
 
 // GET doctor by ID and format slots
 exports.getDoctorById = async (req, res) => {
