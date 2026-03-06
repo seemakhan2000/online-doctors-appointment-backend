@@ -53,63 +53,115 @@ exports.getAllDoctors = async (req, res) => {
 };
 
 // ========== ADD DOCTOR ==========
+// exports.addDoctor = async (req, res) => {
+//   try {
+//     const {
+//       name,
+//       email,
+//       phone,
+//       specialization,
+//       experience,
+//       education,
+//       certifications,
+//       languages,
+//       hospital,
+//       availabilitySlots,
+//     } = req.body;
+
+//     // ✅ When using CloudinaryStorage
+//     const imagePath = req.file ? req.file.path : "";
+
+//     const doctor = new Doctor({
+//       name,
+//       email,
+//       phone,
+//       specialization,
+//       experience,
+//       education,
+//       certifications,
+//       languages,
+//       hospital,
+//       image: imagePath,
+//       availabilitySlots: [],
+//     });
+
+//     let slots = [];
+//     try {
+//       slots = JSON.parse(availabilitySlots || "[]");
+//     } catch (err) {
+//       console.log("Invalid availability JSON");
+//     }
+
+//     slots.forEach((slot) => {
+//       doctor.availabilitySlots.push({
+//         type: slot.type || "weekly",
+//         dayOfWeek: slot.dayOfWeek,
+//         startTime: slot.startTime,
+//         endTime: slot.endTime,
+//         duration: slot.duration || 30,
+//         date: slot.date || null,
+//       });
+//     });
+
+//     await doctor.save();
+
+//     res.status(201).json({ success: true, doctor });
+
+//   } catch (error) {
+//     console.error("Add Doctor Error:", error);
+//     res.status(500).json({ success: false, message: error.message });
+//   }
+// };
+
+
+
 exports.addDoctor = async (req, res) => {
   try {
+
     const {
       name,
+      specialization,
       email,
       phone,
+      experience,
+      education,
+      certifications,
+      languages,
+      hospital
+    } = req.body;
+
+    const availabilitySlots = req.body.availabilitySlots
+      ? JSON.parse(req.body.availabilitySlots)
+      : [];
+
+    const image = req.file ? req.file.path : "";
+
+    const doctor = new Doctor({
+      name,
       specialization,
+      email,
+      phone,
       experience,
       education,
       certifications,
       languages,
       hospital,
       availabilitySlots,
-    } = req.body;
-
-    // ✅ When using CloudinaryStorage
-    const imagePath = req.file ? req.file.path : "";
-
-    const doctor = new Doctor({
-      name,
-      email,
-      phone,
-      specialization,
-      experience,
-      education,
-      certifications,
-      languages,
-      hospital,
-      image: imagePath,
-      availabilitySlots: [],
-    });
-
-    let slots = [];
-    try {
-      slots = JSON.parse(availabilitySlots || "[]");
-    } catch (err) {
-      console.log("Invalid availability JSON");
-    }
-
-    slots.forEach((slot) => {
-      doctor.availabilitySlots.push({
-        type: slot.type || "weekly",
-        dayOfWeek: slot.dayOfWeek,
-        startTime: slot.startTime,
-        endTime: slot.endTime,
-        duration: slot.duration || 30,
-        date: slot.date || null,
-      });
+      image
     });
 
     await doctor.save();
 
-    res.status(201).json({ success: true, doctor });
+    res.status(201).json({
+      success: true,
+      doctor
+    });
 
   } catch (error) {
     console.error("Add Doctor Error:", error);
-    res.status(500).json({ success: false, message: error.message });
+    res.status(500).json({
+      message: "Server error"
+    });
   }
 };
 
